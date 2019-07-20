@@ -5,7 +5,7 @@ import cv2
 from darknet import Darknet
 
 from yolo_utils import get_all_boxes, nms, plot_boxes_cv2
-
+from config import my_config
 
 class YOLO3(object):
     def __init__(self, cfgfile, weightfile, namesfile, use_cuda=True, is_plot=False, is_xywh=False):
@@ -13,6 +13,9 @@ class YOLO3(object):
         self.net = Darknet(cfgfile)
         self.net.load_weights(weightfile)
         print('Loading weights from %s... Done!' % (weightfile))
+
+        #7.20
+        use_cuda=my_config['use_cuda']
         self.device = "cuda" if use_cuda else "cpu"
         self.net.eval()
         self.net.to(self.device)

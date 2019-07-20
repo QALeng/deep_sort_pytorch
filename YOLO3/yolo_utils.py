@@ -5,6 +5,7 @@ import math
 import torch
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from config import  my_config
 # import itertools
 import struct # get_image_size
 import imghdr # get_image_size
@@ -116,6 +117,7 @@ def get_all_boxes(output, conf_thresh, num_classes, only_objectness=1, validatio
     return all_boxes
 
 def get_region_boxes(output, conf_thresh, num_classes, anchors, num_anchors, only_objectness=1, validation=False, use_cuda=True):
+    use_cuda=my_config['use_cuda']
     device = torch.device("cuda" if use_cuda else "cpu")
     anchors = anchors.to(device)
     anchor_step = anchors.size(0)//num_anchors

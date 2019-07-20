@@ -19,34 +19,45 @@ class DeepSort(object):
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
         self.tracker = Tracker(metric)
 
-    def update(self, bbox_xywh, confidences, ori_img):
+    def update(self, bbox_xywh, confidences, ori_img, allName):
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         features = self._get_features(bbox_xywh, ori_img)
-        detections = [Detection(bbox_xywh[i], conf, features[i]) for i,conf in enumerate(confidences) if conf>self.min_confidence]
+        detections = [Detection(bbox_xywh[i], conf, features[i], allName[i]) for i, conf in enumerate(confidences) if
+                      conf > self.min_confidence]
 
         # run on non-maximum supression
         boxes = np.array([d.tlwh for d in detections])
         scores = np.array([d.confidence for d in detections])
-        indices = non_max_suppression( boxes, self.nms_max_overlap, scores)
+
+        #          非  最大值 抑制
+        indices = non_max_suppression(boxes, self.nms_max_overlap, scores)
+
         detections = [detections[i] for i in indices]
 
         # update tracker
         self.tracker.predict()
         self.tracker.update(detections)
-
         # output bbox identities
         outputs = []
+
+        returnName = []
+
         for track in self.tracker.tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
+
             box = track.to_tlwh()
-            x1,y1,x2,y2 = self._xywh_to_xyxy(box)
+            x1, y1, x2, y2 = self._xywh_to_xyxy(box)
             track_id = track.track_id
-            outputs.append(np.array([x1,y1,x2,y2,track_id], dtype=np.int))
+
+            className = track.className
+            print(className)
+            outputs.append(np.array([x1, y1, x2, y2, track_id], dtype=np.int))
+            returnName.append(className)
         if len(outputs) > 0:
-            outputs = np.stack(outputs,axis=0)
-        return outputs
+            outputs = np.stack(outputs, axis=0)
+        return outputs, returnName
 
     def _xywh_to_xyxy(self, bbox_xywh):
         x,y,w,h = bbox_xywh
