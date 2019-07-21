@@ -8,6 +8,7 @@ from darknet import Darknet
 import cv2
 
 namesfile=None
+#一次检测多张图片，图片一张一张的检测
 def detect(cfgfile, weightfile, imgfolder):
     m = Darknet(cfgfile)
 
