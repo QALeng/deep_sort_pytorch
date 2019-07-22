@@ -1,5 +1,5 @@
 # vim: expandtab:ts=4:sw=4
-
+from config import  my_config
 
 class TrackState:
     """
@@ -63,14 +63,16 @@ class Track:
 
     """
 
-    def __init__(self, mean, covariance, track_id, n_init, max_age,
-                 feature=None, className="object"):
+    def __init__(self, mean, covariance, track_id, n_init, max_age,start_time,
+                 feature=None, class_name="object"):
         self.mean = mean
         self.covariance = covariance
         self.track_id = track_id
         self.hits = 1
         self.age = 1
-        self.time_since_update = 0
+        #通过时间来删除则不需要更新次数
+        # #更新次数
+        # self.time_since_update = 0
 
         self.state = TrackState.Tentative
         self.features = []
@@ -79,7 +81,15 @@ class Track:
 
         self._n_init = n_init
         self._max_age = max_age
-        self.className = className
+        #类名
+        self.class_name = class_name
+        #检测到的时间
+        self.start_time=start_time
+        #离开标志位，为1表示还在，默认为零
+        self.left_flag=1
+        #第一次离开时间
+        self.first_left_time=start_time
+
     def to_tlwh(self):
         """Get current position in bounding box format `(top left x, top left y,
         width, height)`.
@@ -121,7 +131,7 @@ class Track:
         """
         self.mean, self.covariance = kf.predict(self.mean, self.covariance)
         self.age += 1
-        self.time_since_update += 1
+        # self.time_since_update += 1
 
     def update(self, kf, detection):
         """Perform Kalman filter measurement update step and update the feature
@@ -140,17 +150,35 @@ class Track:
         self.features.append(detection.feature)
 
         self.hits += 1
-        self.time_since_update = 0
+
+        # self.time_since_update = 0
         if self.state == TrackState.Tentative and self.hits >= self._n_init:
             self.state = TrackState.Confirmed
 
-    def mark_missed(self):
+        #当物体重新被检测到的时候，如果为0，则改为1
+        if self.left_flag==0:
+            self.left_flag=1
+    ##这是原先的标记为检测的函数
+    # def mark_missed(self):
+    #     """Mark this track as missed (no association at the current time step).
+    #     """
+    #     if self.state == TrackState.Tentative:
+    #         self.state = TrackState.Deleted
+    #     elif self.time_since_update > self._max_age:
+    #         self.state = TrackState.Deleted
+    def mark_missed(self,now_time,left_time):
         """Mark this track as missed (no association at the current time step).
-        """
-        if self.state == TrackState.Tentative:
-            self.state = TrackState.Deleted
-        elif self.time_since_update > self._max_age:
-            self.state = TrackState.Deleted
+            #     """
+
+        #表示长时间离开将被删除，这里只是新增一个删除标志位
+        if self.left_flag==0 and (now_time>self.first_left_time)>left_time:
+            self.state=TrackState.Deleted
+        #修改离开的标志位，只在第一次离开的时候修改      可能是出现了被遮挡的情况
+        if self.left_flag==1:
+            self.first_left_time=now_time
+            self.state=TrackState.Tentative
+            self.left_flag=0
+
 
     def is_tentative(self):
         """Returns True if this track is tentative (unconfirmed).

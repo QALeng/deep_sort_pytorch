@@ -26,12 +26,14 @@ class Detection(object):
 
     """
 
-    def __init__(self, tlwh, confidence, feature,className):
+    def __init__(self, tlwh, confidence, feature,class_name,start_time):
         self.tlwh = np.asarray(tlwh, dtype=np.float)
         self.confidence = float(confidence)
         self.feature = np.asarray(feature, dtype=np.float32)
-        self.className=className
-
+        #对象的类型
+        self.class_name=class_name
+        #对象检测的开始时间
+        self.start_time=start_time
     def to_tlbr(self):
         """Convert bounding box to format `(min x, min y, max x, max y)`, i.e.,
         `(top left, bottom right)`.

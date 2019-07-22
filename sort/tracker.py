@@ -5,7 +5,7 @@ from . import kalman_filter
 from . import linear_assignment
 from . import iou_matching
 from .track import Track
-
+from config import  my_config
 
 class Tracker:
     """
@@ -47,6 +47,10 @@ class Tracker:
         self.tracks = []
         self._next_id = 1
 
+        # 判断是否离开时长
+        self.left_time=my_config['left_time']
+
+
     def predict(self):
         """Propagate track state distributions one time step forward.
 
@@ -67,13 +71,15 @@ class Tracker:
         # Run matching cascade.
         matches, unmatched_tracks, unmatched_detections = \
             self._match(detections)
-
+        #被检测的当前图片的时间
+        now_time=detections[0].start_time
         # Update track set.
         for track_idx, detection_idx in matches:
             self.tracks[track_idx].update(
                 self.kf, detections[detection_idx])
         for track_idx in unmatched_tracks:
-            self.tracks[track_idx].mark_missed()
+            #长时间离开将被删除
+            self.tracks[track_idx].mark_missed(now_time,self.left_time)
         for detection_idx in unmatched_detections:
             self._initiate_track(detections[detection_idx])
         self.tracks = [t for t in self.tracks if not t.is_deleted()]
@@ -133,6 +139,6 @@ class Tracker:
     def _initiate_track(self, detection):
         mean, covariance = self.kf.initiate(detection.to_xyah())
         self.tracks.append(Track(
-            mean, covariance, self._next_id, self.n_init, self.max_age,
-            detection.feature, detection.className))
+            mean, covariance, self._next_id, self.n_init, self.max_age,detection.start_time,
+            detection.feature, detection.class_name))
         self._next_id += 1

@@ -3,7 +3,6 @@ import torch
 import numpy as np
 import cv2
 from darknet import Darknet
-
 from yolo_utils import get_all_boxes, nms, plot_boxes_cv2
 from config import my_config
 from MyDataLoader import  MyDataLoader
@@ -75,44 +74,7 @@ class YOLO3(object):
         cls_ids = boxes[:, 6]
         # print(cls_ids)
         return bbox, cls_conf, cls_ids
-        # imgs=MyDataLoader(ori_imgs,self.size)
-        # returnReusult={}
-        # for index,img in enumerate(imgs):
-        #     ori_img=ori_imgs[index]
-        #     # forward
-        #     with torch.no_grad():
-        #         img = img.to(self.device)
-        #         out_boxes = self.net(img)
-        #         boxes = get_all_boxes(out_boxes, self.conf_thresh, self.net.num_classes, self.use_cuda)[0]
-        #         boxes = nms(boxes, self.nms_thresh)
-        #         # print(boxes)
-        #     # plot boxes
-        #     if self.is_plot:
-        #         returnReusult[index]=[self.plot_bbox(ori_img, boxes)]
-        #     if len(boxes) == 0:
-        #         returnReusult[index]=[ None, None, None]
-        #
-        #     height, width = ori_img.shape[:2]
-        #     boxes = np.vstack(boxes)
-        #     bbox = np.empty_like(boxes[:, :4])
-        #     if self.is_xywh:
-        #         # bbox x y w h
-        #         bbox[:, 0] = boxes[:, 0] * width
-        #         bbox[:, 1] = boxes[:, 1] * height
-        #         bbox[:, 2] = boxes[:, 2] * width
-        #         bbox[:, 3] = boxes[:, 3] * height
-        #     else:
-        #         # bbox xmin ymin xmax ymax
-        #         bbox[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2.0) * width
-        #         bbox[:, 1] = (boxes[:, 1] - boxes[:, 3] / 2.0) * height
-        #         bbox[:, 2] = (boxes[:, 0] + boxes[:, 2] / 2.0) * width
-        #         bbox[:, 3] = (boxes[:, 1] + boxes[:, 3] / 2.0) * height
-        #     cls_conf = boxes[:, 5]
-        #     cls_ids = boxes[:, 6]
-        #     # print(cls_ids)
-        #     returnReusult[index]=[bbox, cls_conf, cls_ids]
-        #
-        # return returnReusult
+
 
 
     def load_class_names(self,namesfile):

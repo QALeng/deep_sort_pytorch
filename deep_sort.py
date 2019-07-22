@@ -5,7 +5,7 @@ from sort.nn_matching import NearestNeighborDistanceMetric
 from sort.preprocessing import non_max_suppression
 from sort.detection import Detection
 from sort.tracker import Tracker
-
+from config import  my_config
 
 class DeepSort(object):
     def __init__(self, model_path):
@@ -13,17 +13,18 @@ class DeepSort(object):
         self.nms_max_overlap = 1.0
 
         self.extractor = Extractor(model_path, use_cuda=True)
-
+        # 违规时间
+        self.bad_time = my_config['bad_time']
         max_cosine_distance = 0.2
         nn_budget = 100
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
         self.tracker = Tracker(metric)
 
-    def update(self, bbox_xywh, confidences, ori_img, allName):
+    def update(self, bbox_xywh, confidences, ori_img, all_name,start_time):
         self.height, self.width = ori_img.shape[:2]
         # generate detections
         features = self._get_features(bbox_xywh, ori_img)
-        detections = [Detection(bbox_xywh[i], conf, features[i], allName[i]) for i, conf in enumerate(confidences) if
+        detections = [Detection(bbox_xywh[i], conf, features[i], all_name[i],start_time) for i, conf in enumerate(confidences) if
                       conf > self.min_confidence]
 
         # run on non-maximum supression
@@ -41,10 +42,12 @@ class DeepSort(object):
         # output bbox identities
         outputs = []
 
-        returnName = []
-
+        return_name = []
+        start_time_all=[]
         for track in self.tracker.tracks:
-            if not track.is_confirmed() or track.time_since_update > 1:
+            # if not track.is_confirmed() or track.time_since_update > 1:
+            #如果是不是为确认的，则跳过
+            if not track.is_confirmed():
                 continue
 
             box = track.to_tlwh()
@@ -54,10 +57,11 @@ class DeepSort(object):
             className = track.className
             print(className)
             outputs.append(np.array([x1, y1, x2, y2, track_id], dtype=np.int))
-            returnName.append(className)
+            return_name.append(className)
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
-        return outputs, returnName
+        stay_time_all=[ [track.class_name,start_time-track.start_time] for track in self.tracker.tracks if(start_time-track.start_time)>self.bad_time]
+        return outputs, return_name,stay_time_all
 
     def _xywh_to_xyxy(self, bbox_xywh):
         x,y,w,h = bbox_xywh
