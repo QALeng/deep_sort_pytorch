@@ -26,15 +26,19 @@ class Tracker:
     ----------
     metric : nn_matching.NearestNeighborDistanceMetric
         The distance metric used for measurement to track association.
+        一种用于测量到轨道关联的距离度量。
     max_age : int
         Maximum number of missed misses before a track is deleted.
+        删除追踪目标的最大未命中次数。
     n_init : int
         Number of frames that a track remains in initialization phase.
+        航迹确定前连续检测次数的跟踪状态被设置为'已删除'，如果在第一个发生失误n_init帧。
     kf : kalman_filter.KalmanFilter
         A Kalman filter to filter target trajectories in image space.
+        一种卡尔曼滤波器，用于滤波图像空间中的目标轨迹。
     tracks : List[Track]
         The list of active tracks at the current time step.
-
+        当前时间步长的活动跟踪列表。
     """
 
     def __init__(self, metric, max_iou_distance=0.7, max_age=30, n_init=3):
@@ -58,8 +62,8 @@ class Tracker:
         """
         for track in self.tracks:
             track.predict(self.kf)
-
-    def update(self, detections):
+    #                           #被检测的当前图片的时间
+    def update(self, detections,now_time):
         """Perform measurement update and track management.
 
         Parameters
@@ -69,10 +73,11 @@ class Tracker:
 
         """
         # Run matching cascade.
+        #参数 已匹配到的   已经有的现在未匹配到的  未匹配的现在检测到的
         matches, unmatched_tracks, unmatched_detections = \
             self._match(detections)
-        #被检测的当前图片的时间
-        now_time=detections[0].start_time
+
+
         # Update track set.
         for track_idx, detection_idx in matches:
             self.tracks[track_idx].update(

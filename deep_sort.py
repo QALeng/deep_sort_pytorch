@@ -7,6 +7,7 @@ from sort.detection import Detection
 from sort.tracker import Tracker
 from config import  my_config
 
+
 class DeepSort(object):
     def __init__(self, model_path):
         self.min_confidence = 0.3
@@ -38,29 +39,29 @@ class DeepSort(object):
 
         # update tracker
         self.tracker.predict()
-        self.tracker.update(detections)
+        self.tracker.update(detections,start_time)
         # output bbox identities
         outputs = []
 
         return_name = []
-        start_time_all=[]
-        for track in self.tracker.tracks:
-            # if not track.is_confirmed() or track.time_since_update > 1:
-            #如果是不是为确认的，则跳过
-            if not track.is_confirmed():
-                continue
 
+        for track in self.tracker.tracks:
+            if not track.is_confirmed() or track.time_since_update > 1:
+            # #如果是不是为确认的，则跳过
+            # if not track.is_confirmed():
+                continue
             box = track.to_tlwh()
             x1, y1, x2, y2 = self._xywh_to_xyxy(box)
             track_id = track.track_id
 
-            className = track.className
-            print(className)
+            class_name = track.class_name
+            print(class_name)
             outputs.append(np.array([x1, y1, x2, y2, track_id], dtype=np.int))
-            return_name.append(className)
+            return_name.append(class_name)
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
-        stay_time_all=[ [track.class_name,start_time-track.start_time] for track in self.tracker.tracks if(start_time-track.start_time)>self.bad_time]
+        #暂定状态与确定状态的都可以记录其停留时间
+        stay_time_all=[ [track.class_name+str(track.track_id),start_time-track.start_time] for track in self.tracker.tracks if(start_time-track.start_time)>self.bad_time]
         return outputs, return_name,stay_time_all
 
     def _xywh_to_xyxy(self, bbox_xywh):

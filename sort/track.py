@@ -45,22 +45,29 @@ class Track:
     ----------
     mean : ndarray
         Mean vector of the initial state distribution.
+        初始状态的向量
     covariance : ndarray
         Covariance matrix of the initial state distribution.
+        初始状态分布的协方差矩阵
     track_id : int
         A unique track identifier.
+        id
     hits : int
         Total number of measurement updates.
+        测量更新的总数
     age : int
         Total number of frames since first occurance.
+        自第一次出现的总帧数
     time_since_update : int
         Total number of frames since last measurement update.
+        自上次测量更新以来的帧总数。
     state : TrackState
         The current track state.
+        当前状态
     features : List[ndarray]
         A cache of features. On each measurement update, the associated feature
         vector is added to this list.
-
+        特性缓存。在每次度量更新时，关联的特性
     """
 
     def __init__(self, mean, covariance, track_id, n_init, max_age,start_time,
@@ -70,17 +77,18 @@ class Track:
         self.track_id = track_id
         self.hits = 1
         self.age = 1
-        #通过时间来删除则不需要更新次数
+        #通过时间来删除对象，则不需要更新次数，所以注释掉了所有time_since_update
         # #更新次数
-        # self.time_since_update = 0
+        self.time_since_update = 0
 
         self.state = TrackState.Tentative
         self.features = []
         if feature is not None:
             self.features.append(feature)
-
         self._n_init = n_init
         self._max_age = max_age
+
+        #新增
         #类名
         self.class_name = class_name
         #检测到的时间
@@ -131,7 +139,7 @@ class Track:
         """
         self.mean, self.covariance = kf.predict(self.mean, self.covariance)
         self.age += 1
-        # self.time_since_update += 1
+        self.time_since_update += 1
 
     def update(self, kf, detection):
         """Perform Kalman filter measurement update step and update the feature
@@ -151,13 +159,14 @@ class Track:
 
         self.hits += 1
 
-        # self.time_since_update = 0
+        self.time_since_update = 0
         if self.state == TrackState.Tentative and self.hits >= self._n_init:
             self.state = TrackState.Confirmed
 
         #当物体重新被检测到的时候，如果为0，则改为1
         if self.left_flag==0:
             self.left_flag=1
+
     ##这是原先的标记为检测的函数
     # def mark_missed(self):
     #     """Mark this track as missed (no association at the current time step).
@@ -169,6 +178,12 @@ class Track:
     def mark_missed(self,now_time,left_time):
         """Mark this track as missed (no association at the current time step).
             #     """
+        # if self.state == TrackState.Tentative:
+        #     self.state = TrackState.Deleted
+        # elif self.time_since_update > self._max_age:
+        # if self.time_since_update > self._max_age:
+        #     self.state = TrackState.Deleted
+
 
         #表示长时间离开将被删除，这里只是新增一个删除标志位
         if self.left_flag==0 and (now_time>self.first_left_time)>left_time:

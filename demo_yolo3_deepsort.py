@@ -30,7 +30,7 @@ class Detector(object):
         self.area = 0, 0, self.im_width, self.im_height
         if self.write_video:
             fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-            self.output = cv2.VideoWriter("demo.avi", fourcc, 20, (self.im_width, self.im_height))
+            self.output = cv2.VideoWriter("demo2222.avi", fourcc, 20, (self.im_width, self.im_height))
         return self.vdo.isOpened()
 
     def detect(self):
@@ -43,14 +43,15 @@ class Detector(object):
         start_time=time.time()
         while self.vdo.grab():
             start = time.time()
+            start_time = time.time()
+            print('now_time: ',start_time)
             endTime = start
             # 方法/函数解码并返回刚刚抓取的帧。如果没有抓取帧（摄像机已断开连接，或视频文件中没有帧），则方法返回false，函数返回NULL指针。
             # https://docs.opencv.org/3.1.0/d8/dfe/classcv_1_1VideoCapture.html#a9ac7f4b1cdfe624663478568486e6712
             # 一帧一帧的读取
 
             _, ori_im = self.vdo.retrieve()
-            print(ori_im)
-            print(type(ori_im))
+
             im = ori_im[ymin:ymax, xmin:xmax, (2, 1, 0)]
             # 用于检测物体
             bbox_xywh, cls_conf, cls_ids = self.yolo3(im)
@@ -84,7 +85,16 @@ class Detector(object):
                         del record_object[endOne[0]]
                     # print(recordObject)
                     new_ori_im= draw_bboxes(ori_im, bbox_xyxy, identities, total_name, offset=(xmin, ymin))
-        return new_ori_im,start_time
+                print(stay_time)
+            if (cv2_flag == True):
+                cv2.imshow("test", ori_im)
+                cv2.waitKey(1)
+
+
+            if self.write_video:
+                self.output.write(ori_im)
+
+        return
 
 if __name__ == "__main__":
     # import sys
@@ -101,5 +111,5 @@ if __name__ == "__main__":
         cv2.namedWindow("test", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("test", 800, 600)
     det = Detector()
-    det.open('./video/1.mp4')
+    det.open('./video/2.mp4')
     det.detect()
