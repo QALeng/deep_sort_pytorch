@@ -44,11 +44,14 @@ class DeepSort(object):
         outputs = []
 
         return_name = []
-
+        stay_time_all=[]
         for track in self.tracker.tracks:
-            if not track.is_confirmed() or track.time_since_update > 1:
+            if not track.is_confirmed() or track.time_since_update > 1 :
             # #如果是不是为确认的，则跳过
             # if not track.is_confirmed():
+                continue
+            #只显示违规的
+            if (start_time-track.start_time)<self.bad_time:
                 continue
             box = track.to_tlwh()
             x1, y1, x2, y2 = self._xywh_to_xyxy(box)
@@ -58,10 +61,14 @@ class DeepSort(object):
             print(class_name)
             outputs.append(np.array([x1, y1, x2, y2, track_id], dtype=np.int))
             return_name.append(class_name)
+            part=[class_name+str(track_id),start_time-track.start_time]
+            stay_time_all.append(part)
         if len(outputs) > 0:
             outputs = np.stack(outputs, axis=0)
         #暂定状态与确定状态的都可以记录其停留时间
-        stay_time_all=[ [track.class_name+str(track.track_id),start_time-track.start_time] for track in self.tracker.tracks if(start_time-track.start_time)>self.bad_time]
+        # stay_time_all=[ [track.class_name,track.track_id,start_time-track.start_time] \
+        #                 for track in self.tracker.tracks \
+        #                 if(start_time-track.start_time)>self.bad_time and track.is_confirmed]
         return outputs, return_name,stay_time_all
 
     def _xywh_to_xyxy(self, bbox_xywh):
