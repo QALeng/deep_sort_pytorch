@@ -11,7 +11,7 @@
 #     #main.py   摄像头的数量
 #     'tracker_number':1,
 #     #违规时间   单位s
-#     'bad_time':60,
+#     'bad_time':20,
 #     #判断是否离开时长  单位s
 #     'left_time':4,
 #     #我们需要检测的类型   对应coco.name
@@ -34,7 +34,7 @@ my_config={
     #违规时间   单位s
     'bad_time':2,
     #判断是否离开时长  单位s
-    'left_time':1,
+    'left_time':60,
     #我们需要检测的类型   对应coco.name
     #person bicycle
     'need':[0,1, 2],

@@ -30,7 +30,7 @@ class Detector(object):
         self.area = 0, 0, self.im_width, self.im_height
 
 
-    def detect(self,ori_im,start_time):
+    def detect(self,index,ori_im,start_time):
         #参数   self.vdo.retrieve()[1]   开始时间
         xmin, ymin, xmax, ymax = self.area
         class_name = self.class_names
@@ -44,7 +44,7 @@ class Detector(object):
             # mask = cls_ids == 1
             # 用于在图片上画框
             mask = [i in need for i in cls_ids]
-            all_name = [class_name[int(i)] for i in cls_ids if i in need]
+            all_name = [str(index)+'_'+class_name[int(i)] for i in cls_ids if i in need]
             bbox_xywh = bbox_xywh[mask]
             bbox_xywh[:, 3] *= 1.2
             cls_conf = cls_conf[mask]
