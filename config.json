@@ -1,0 +1,34 @@
+{
+    "explain": {
+       "cv2_flag":"位置: demo_yolo3_deepsort.py ,作用: 控制opencv窗口的打开",
+        "use_cuda":"位置: YOLO3/detector.py ,作用: 判断是否使用cuda" ,
+        "map_location_flag":"位置: deep/feature_extractor.py ,作用: 控制map_location_flag_explain 在windows下，其值为true ",
+        "bad_time":"违规时长，单位为s",
+        "left_time":"离开时长，单位为s",
+        "need":"检测的对象，编号在YOLO3/cfg/coco.names"
+    },
+    "explain_e": {
+        "cv2_flag":"adress: demo_yolo3_deepsort.py ,function: control the opening of the opencv window",
+        "use_cuda":"adress: YOLO3/detector.py ,function: cetermine whether to use cuda " ,
+        "map_location_flag":"adress: deep/feature_extractor.py ,function: control map_location_flag_explain ,under windows, the value is true ",
+        "bad_time":"bad time,the unit is in seconds",
+        "left_time":"left time,the unit is in seconds",
+        "need":"objects to detect，the Numbers are in YOLO3/cfg/coco.names"
+    },
+    "win10": {
+        "cv2_flag":"True",
+        "use_cuda":"False",
+        "map_location_flag":"True",
+        "bad_time":2,
+        "left_time":60,
+        "need":[0,1, 2]
+    },
+    "centos7": {
+        "cv2_flag":"False",
+        "use_cuda":"True",
+        "map_location_flag":"False",
+        "bad_time":2,
+        "left_time":60,
+        "need":[0,1, 2]
+    }
+}

@@ -1,41 +1,28 @@
-# # #win10
-# my_config={
-#     #demo_yolo3_deepsort.py    cv2
-#     'cv2_flag':True,
-#     #YOLO3/detector.py
-#     'use_cuda':False,
-#     #deep/feature_extractor.py
-#     'map_location_flag':True,
-#     #YOLO3/yolo_utils.py
-#     # 'use_cuda':False,
-#     #main.py   摄像头的数量
-#     'tracker_number':1,
-#     #违规时间   单位s
-#     'bad_time':20,
-#     #判断是否离开时长  单位s
-#     'left_time':4,
-#     #我们需要检测的类型   对应coco.name
-#     #=bicycle car  person
-#     'need':[1, 2,0],
-# }
+# -*- coding:utf-8 -*-
+import json
+import sys
 
-# Centos7
-my_config={
-    #demo_yolo3_deepsort.py    cv2
-    'cv2_flag':False,
-    #YOLO3/detector.py
-    'use_cuda':True,
-    #deep/feature_extractor.py
-    'map_location_flag':True,
-    #YOLO3/yolo_utils.py
-    # 'use_cuda':False,
-    #main.py   摄像头的数量
-    'tracker_number':1,
-    #违规时间   单位s
-    'bad_time':2,
-    #判断是否离开时长  单位s
-    'left_time':60,
-    #我们需要检测的类型   对应coco.name
-    #person bicycle
-    'need':[0,1, 2],
-}
+def readConfig(configPath,system):
+    with open(configPath, 'r', encoding='utf-8') as f:
+        all = f.read()
+        temp = json.loads(all)[system]
+        if temp['use_cuda'] == 'True':
+            temp['use_cuda'] = True
+        else:
+            temp['use_cuda'] = False
+        if temp['map_location_flag']=='True':
+            temp['map_location_flag']=True
+        else:
+            temp['map_location_flag']=False
+        if temp['cv2_flag'] == 'True':
+            temp['cv2_flag'] = True
+        else:
+            temp['cv2_flag'] = False
+    return temp
+
+
+configPath='config.json'
+my_config=readConfig(configPath,'centos7')
+print(my_config)
+
+
