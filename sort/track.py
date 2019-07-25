@@ -1,5 +1,5 @@
 # vim: expandtab:ts=4:sw=4
-from config import  my_config
+
 
 class TrackState:
     """

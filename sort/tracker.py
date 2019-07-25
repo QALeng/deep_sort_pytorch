@@ -5,7 +5,7 @@ from . import kalman_filter
 from . import linear_assignment
 from . import iou_matching
 from .track import Track
-from config import  my_config
+
 
 class Tracker:
     """
@@ -41,7 +41,7 @@ class Tracker:
         当前时间步长的活动跟踪列表。
     """
 
-    def __init__(self, metric, max_iou_distance=0.7, max_age=30, n_init=3):
+    def __init__(self, metric, left_time,max_iou_distance=0.7, max_age=30, n_init=3):
         self.metric = metric
         self.max_iou_distance = max_iou_distance
         self.max_age = max_age
@@ -52,7 +52,7 @@ class Tracker:
         self._next_id = 1
 
         # 判断是否离开时长
-        self.left_time=my_config['left_time']
+        self.left_time=left_time
 
 
     def predict(self):

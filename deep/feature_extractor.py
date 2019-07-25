@@ -4,15 +4,15 @@ import numpy as np
 import cv2
 
 from .model import Net
-from config import my_config
+
 
 class Extractor(object):
-    def __init__(self, model_path, use_cuda=True):
+    def __init__(self, model_path, map_location_flag,use_cuda=True):
         self.net = Net(reid=True)
         self.device = "cuda" if torch.cuda.is_available() and use_cuda else "cpu"
 
-        map_location_flag=my_config['map_location_flag']
-        if(map_location_flag==True):
+        self.map_location_flag=map_location_flag
+        if(self.map_location_flag==True):
             state_dict = torch.load(model_path, map_location='cpu')['net_dict']
         else:
             state_dict = torch.load(model_path)['net_dict']

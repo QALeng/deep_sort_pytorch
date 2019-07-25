@@ -6,22 +6,30 @@ from YOLO3 import YOLO3
 from deep_sort import DeepSort
 from util import COLORS_10, draw_bboxes
 
-from config import my_config
+
 
 import time
 
 
 class Detector(object):
-    def __init__(self,im_height,im_width):
+    def __init__(self,im_height,im_width,my_config):
+
+        self.need = my_config['need']
+        self.use_cuda = my_config['use_cuda']
+        self.map_location_flag = my_config['map_location_flag']
+        self.bad_time = my_config['bad_time']
+        self.left_time = my_config['left_time']
+        self.bad_time=my_config['bad_time']
         #参数相机的   长度 宽度
         #测试的时候可以 图片的长度 宽度
         self.vdo = cv2.VideoCapture()
-        self.yolo3 = YOLO3("YOLO3/cfg/yolo_v3.cfg", "YOLO3/yolov3.weights", "YOLO3/cfg/coco.names", is_xywh=True)
-        self.deepsort = DeepSort("deep/checkpoint/ckpt.t7")
+        self.yolo3 = YOLO3("YOLO3/cfg/yolo_v3.cfg", "YOLO3/yolov3.weights", "YOLO3/cfg/coco.names",use_cuda=self.use_cuda, is_xywh=True)
+        self.deepsort = DeepSort("deep/checkpoint/ckpt.t7",use_cuda=self.use_cuda,map_location_flag=self.map_location_flag,
+                                 bad_time=self.bad_time,left_time=self.left_time)
         self.class_names = self.yolo3.class_names
         self.write_video = True
         self.record_object={}  #
-        self.need=my_config['need']
+
         # self.cv2_flag=my_config['cv2_flag']
         # self.im_width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.im_width=im_width

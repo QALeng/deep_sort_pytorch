@@ -5,21 +5,21 @@ from sort.nn_matching import NearestNeighborDistanceMetric
 from sort.preprocessing import non_max_suppression
 from sort.detection import Detection
 from sort.tracker import Tracker
-from config import  my_config
+
 
 
 class DeepSort(object):
-    def __init__(self, model_path):
+    def __init__(self, model_path,use_cuda,map_location_flag,bad_time,left_time):
         self.min_confidence = 0.3
         self.nms_max_overlap = 1.0
 
-        self.extractor = Extractor(model_path, use_cuda=True)
+        self.extractor = Extractor(model_path, use_cuda=use_cuda,map_location_flag=map_location_flag)
         # 违规时间
-        self.bad_time = my_config['bad_time']
+        self.bad_time = bad_time
         max_cosine_distance = 0.2
         nn_budget = 100
         metric = NearestNeighborDistanceMetric("cosine", max_cosine_distance, nn_budget)
-        self.tracker = Tracker(metric)
+        self.tracker = Tracker(metric,left_time=left_time)
 
     def update(self, bbox_xywh, confidences, ori_img, all_name,start_time):
         self.height, self.width = ori_img.shape[:2]

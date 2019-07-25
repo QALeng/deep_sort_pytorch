@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 from darknet import Darknet
 from yolo_utils import get_all_boxes, nms, plot_boxes_cv2
-from config import my_config
+
 from MyDataLoader import  MyDataLoader
 class YOLO3(object):
     def __init__(self, cfgfile, weightfile, namesfile, use_cuda=True, is_plot=False, is_xywh=False):
@@ -13,8 +13,6 @@ class YOLO3(object):
         self.net.load_weights(weightfile)
         print('Loading weights from %s... Done!' % (weightfile))
 
-        #7.20
-        use_cuda=my_config['use_cuda']
         self.device = "cuda" if use_cuda else "cpu"
         self.net.eval()
         self.net.to(self.device)
@@ -46,7 +44,7 @@ class YOLO3(object):
         with torch.no_grad():
             img = img.to(self.device)
             out_boxes = self.net(img)
-            boxes = get_all_boxes(out_boxes, self.conf_thresh, self.net.num_classes, self.use_cuda)[0]
+            boxes = get_all_boxes(out_boxes, self.conf_thresh, self.net.num_classes,use_cuda=self.use_cuda)[0]
             boxes = nms(boxes, self.nms_thresh)
             # print(boxes)
         # plot boxes
