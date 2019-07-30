@@ -58,7 +58,7 @@ class DeepSort(object):
             track_id = track.track_id
 
             class_name = track.class_name
-            print(class_name)
+            # print(class_name)
             outputs.append(np.array([x1, y1, x2, y2, track_id], dtype=np.int))
             return_name.append(class_name)
             part=[class_name+str(track_id),start_time-track.start_time]

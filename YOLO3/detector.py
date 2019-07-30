@@ -2,6 +2,7 @@ import torch
 # import time
 import numpy as np
 import cv2
+import time
 from darknet import Darknet
 from yolo_utils import get_all_boxes, nms, plot_boxes_cv2
 
@@ -100,7 +101,9 @@ class YOLO3(object):
         return img
 
 if __name__ == '__main__':
-    yolo3 = YOLO3("cfg/yolo_v3.cfg","yolov3.weights","cfg/coco.names", is_plot=True)
+    yolo3 = YOLO3("cfg/yolo_v3.cfg","yolov3.weights","cfg/coco.names", is_plot=True,use_cuda=False)
+    # yolo3 = YOLO3("cfg/yolov3-tiny.cfg","yolov3-tiny.weights","cfg/coco.names", is_plot=True,use_cuda=False)
+
     print("yolo3.size =",yolo3.size)
     import os
     root = "../images/"
@@ -109,13 +112,16 @@ if __name__ == '__main__':
     for filename in files:
         img = cv2.imread(filename)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        start=time.time()
         res = yolo3(img)
-
+        end=time.time()
+        print(end-start)
+        # cv2.imshow(res)
         # save results
         cv2.imwrite("../imagesP/{}".format(os.path.basename(filename)),res[:,:,(2,1,0)])
         # imshow
-        # cv2.namedWindow("yolo3", cv2.WINDOW_NORMAL)
-        # cv2.resizeWindow("yolo3", 600,600)
-        # cv2.imshow("yolo3",res[:,:,(2,1,0)])
-        # cv2.waitKey(0)
+        cv2.namedWindow("yolo3", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("yolo3", 600,600)
+        cv2.imshow("yolo3",res[:,:,(2,1,0)])
+        cv2.waitKey(0)
 

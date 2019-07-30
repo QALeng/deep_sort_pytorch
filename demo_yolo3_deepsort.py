@@ -23,7 +23,12 @@ class Detector(object):
         #参数相机的   长度 宽度
         #测试的时候可以 图片的长度 宽度
         self.vdo = cv2.VideoCapture()
-        self.yolo3 = YOLO3("YOLO3/cfg/yolo_v3.cfg", "YOLO3/yolov3.weights", "YOLO3/cfg/coco.names",use_cuda=self.use_cuda, is_xywh=True)
+        yolov3Flag=my_config['yolo']
+        if(yolov3Flag=='yolov3'):
+            self.yolo3 = YOLO3("YOLO3/cfg/yolo_v3.cfg", "YOLO3/yolov3.weights", "YOLO3/cfg/coco.names",use_cuda=self.use_cuda, is_xywh=True)
+        elif(yolov3Flag=='yolov3-tiny'):
+            self.yolo3 = YOLO3("YOLO3/cfg/yolov3-tiny.cfg", "YOLO3/yolov3-tiny.weights", "YOLO3/cfg/coco.names",use_cuda=self.use_cuda, is_xywh=True)
+
         self.deepsort = DeepSort("deep/checkpoint/ckpt.t7",use_cuda=self.use_cuda,map_location_flag=self.map_location_flag,
                                  bad_time=self.bad_time,left_time=self.left_time)
         self.class_names = self.yolo3.class_names
@@ -61,7 +66,7 @@ class Detector(object):
                 bbox_xyxy = outputs[:, :4]
                 identities = outputs[:, -1]  # 可以通过这里来记录时间，因为这里可以查看当前对象的id
                 ori_im = draw_bboxes(ori_im, bbox_xyxy, identities, total_name, offset=(xmin, ymin))
-            print(stay_time)
+            # print(stay_time)
         # if (self.cv2_flag == True):
         #         #     cv2.imshow("test", ori_im)
         #         #     cv2.waitKey(1)

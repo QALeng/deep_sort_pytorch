@@ -1,19 +1,21 @@
 {
     "explain": {
-       "cv2_flag":"位置: demo_yolo3_deepsort.py ,作用: 控制opencv窗口的打开",
-        "use_cuda":"位置: YOLO3/detector.py ,作用: 判断是否使用cuda" ,
-        "map_location_flag":"位置: deep/feature_extractor.py ,作用: 控制map_location_flag_explain 在windows下，其值为true ",
+       "cv2_flag":"控制opencv窗口的打开",
+        "use_cuda":"判断是否使用cuda" ,
+        "map_location_flag":"控制map_location_flag_explain 在windows下，其值为true ",
         "bad_time":"违规时长，单位为s",
         "left_time":"离开时长，单位为s",
-        "need":"检测的对象，编号在YOLO3/cfg/coco.names"
+        "need":"检测的对象，编号在YOLO3/cfg/coco.names",
+        "yolo": "yolo的版本。本项目现在有yolov3,yolov3-tiny两个版本"
     },
     "explain_e": {
-        "cv2_flag":"adress: demo_yolo3_deepsort.py ,function: control the opening of the opencv window",
-        "use_cuda":"adress: YOLO3/detector.py ,function: cetermine whether to use cuda " ,
-        "map_location_flag":"adress: deep/feature_extractor.py ,function: control map_location_flag_explain ,under windows, the value is true ",
+        "cv2_flag":"control the opening of the opencv window",
+        "use_cuda":"cetermine whether to use cuda " ,
+        "map_location_flag":"control map_location_flag_explain ,under windows, the value is true ",
         "bad_time":"bad time,the unit is in seconds",
         "left_time":"left time,the unit is in seconds",
-        "need":"objects to detect，the Numbers are in YOLO3/cfg/coco.names"
+        "need":"objects to detect，the Numbers are in YOLO3/cfg/coco.names",
+        "yolo": "yolo versions。The project now has yolov3,yolov3-tiny versions"
     },
     "win10": {
         "cv2_flag":"True",
@@ -21,7 +23,8 @@
         "map_location_flag":"True",
         "bad_time":2,
         "left_time":60,
-        "need":[0,1, 2]
+        "need":[0,1, 2],
+        "yolo":"yolov3-tiny"
     },
     "centos7": {
         "cv2_flag":"False",
@@ -29,6 +32,7 @@
         "map_location_flag":"False",
         "bad_time":2,
         "left_time":60,
-        "need":[0,1, 2]
+        "need":[0,1, 2],
+        "yolo": "yolov3-tiny"
     }
 }
