@@ -86,6 +86,7 @@ class Track:
         if feature is not None:
             self.features.append(feature)
         self._n_init = n_init
+
         self._max_age = max_age
 
         #新增

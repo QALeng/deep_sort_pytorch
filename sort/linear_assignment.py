@@ -44,6 +44,26 @@ def min_cost_matching(
         * A list of unmatched detection indices.
 
     """
+    """
+            距离度量给出了跟踪和检测的列表以及
+        N个跟踪指标和M个检测指标的列表。指标应
+        返回NxM维成本矩阵，其中元素(i, j)为
+        给定航迹指标中第i条航迹与之间的关联成本
+        在给定的detection_indices中进行第j次检测。
+        max_distance:浮动
+        控制阈值。与大于此值的成本相关
+        忽视。
+        跟踪:列表(track.Track)
+        当前时间步长的预测轨迹列表。
+        检测:列表(detection.Detection)
+        当前时间步长的检测列表。
+        track_indices:列表(int)
+        将' cost_matrix '中的行映射到' trackin '的跟踪索引列表
+        “轨道”(参见上面的描述)。
+        detection_indices:列表(int)
+        将“cost_matrix”中的列映射到的检测索引列表
+        在“detections”中检测(见上文的说明)。
+    """
     if track_indices is None:
         track_indices = np.arange(len(tracks))
     if detection_indices is None:

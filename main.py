@@ -1,11 +1,12 @@
 # -*- coding:utf-8 -*-
-from demo_yolo3_deepsort import Detector
-from rtmp.rtmpFunC import pipeFuncInit
+from yolov3_deepsort import Detector
+from rtmp.rtmp_func import pipe_init
 import  time
 import  cv2
 import json
 
-def readConfig(configPath,system):
+#读取配置文件函数
+def read_config(configPath,system):
     with open(configPath, 'r', encoding='utf-8') as f:
         all = f.read()
         temp = json.loads(all)[system]
@@ -23,43 +24,43 @@ def readConfig(configPath,system):
             temp['cv2_flag'] = False
     return temp
 
-
+#配置文件
 configPath='config.json'
-my_config=readConfig(configPath,'centos7')
-print(my_config)
-width=640
-height=360
-
+my_config=read_config(configPath,'centos7')
+#帧的宽，高度
+width,height=1280,720
+#检测函数初始化
 detector=Detector(width,height,my_config)
-video_path='./video/2.mp4'
-# cv2.namedWindow("test", cv2.WINDOW_NORMAL)
-# cv2.resizeWindow("test", 800, 600)
+video_path='./video/5.mp4'
 vdo=cv2.VideoCapture()
-# stream=vdo.open(video_path)
-
 stream=cv2.VideoCapture(video_path)
-fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-output = cv2.VideoWriter("1_60s.avi", fourcc, 20, (width, height))
+
+
+
+
 #pipe
-rtmpUrl = 'rtmp://www.iocollege.com:1935/live/mytest'
-newWidth=stream.get(cv2.CAP_PROP_FRAME_WIDTH)
-newHeight=stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
-sizeStr=str(int(newWidth))+'x'+str(int(newHeight))
-fps=stream.get(cv2.CAP_PROP_FPS)
-stream.release()
-stream=vdo.open(video_path)
-pipe=pipeFuncInit(rtmpUrl, sizeStr, fps)
+# rtmp_url = 'rtmp://www.iocollege.com:1935/live/mytest'
+rtm_url='rtmp://video.510link.com:1935/live/streama'
+wp,hp=0.5,0.5
+size=(int(width*wp),int(height*hp))
+size_str=str(size[0])+'x'+str(size[1])
+fps=24
+bit='512K'
+pipe=pipe_init(rtm_url,size_str , fps,bit)
+
+
+#输出文件
+# 用来设置需要保存视频的格式
+fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+output = cv2.VideoWriter("out.avi", fourcc, fps, (width, height))
+
+
 
 while vdo.grab():
     start_time = time.time()
-    print('now_time: ',start_time)
     _, ori_im = vdo.retrieve()
-    result1,result2=detector.detect(1,ori_im,start_time)
-    # print(result1)
-    # cv2.imshow("test", result1)
-    output.write(result1)
+    ori_im,return_time=detector.detect(1,ori_im,start_time)
+    pipe.stdin.write(ori_im.tostring())  # 存入管道用于直播
+    output.write(ori_im)
 
-    pipe.stdin.write(result1.tostring())  # 存入管道用于直播
-    # cv2.waitKey(1)
 stream.release()
-output.release()

@@ -118,7 +118,7 @@ if __name__ == '__main__':
         print(end-start)
         # cv2.imshow(res)
         # save results
-        cv2.imwrite("../imagesP/{}".format(os.path.basename(filename)),res[:,:,(2,1,0)])
+        cv2.imwrite("../images_pre/{}".format(os.path.basename(filename)),res[:,:,(2,1,0)])
         # imshow
         cv2.namedWindow("yolo3", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("yolo3", 600,600)
