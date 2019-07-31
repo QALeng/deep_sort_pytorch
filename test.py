@@ -53,14 +53,14 @@ pipe=pipe_init(rtmp_url,size_str , fps,bit)
 video_save_dir='./video_pre/'
 # 用来设置需要保存视频的编码方式
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-save_name=video_name.split('.')[0]+'.avi'
+save_name='yolov3_'+video_name.split('.')[0]+'.avi'
 output = cv2.VideoWriter(video_save_dir+save_name, fourcc, fps, (width, height))
 
 
 while vdo.grab():
     start_time = time.time()
     _, ori_im = vdo.retrieve()
-    ori_im,return_time=detector.detect(1,ori_im,start_time)
+    ori_im=detector.detect(1,ori_im,start_time)[0]
     output.write(ori_im)
     dispose_img=cv2.resize(ori_im,size)
     pipe.stdin.write(dispose_img.tostring())  # 存入管道用于直播

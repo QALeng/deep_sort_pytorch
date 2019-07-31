@@ -60,4 +60,11 @@ class Detector(object):
                 identities = outputs[:, -1]  # 可以通过这里来记录时间，因为这里可以查看当前对象的id
                 ori_im = draw_bboxes(ori_im, bbox_xyxy, identities, total_name, offset=(xmin, ymin))
         #因为有可能会出现没有图片的情况所以最好这样返回
-        return  ori_im,stay_time
+        if (len(stay_time) == 0):
+            result = (ori_im, ['null', 0], ['null', 0])
+        elif (len(stay_time) == 1):
+            result = (ori_im, stay_time[0], ['null', 0])
+        else:
+            result = (ori_im, stay_time[0], ori_im, stay_time[1])
+        return result
+        # return  ori_im,stay_time
