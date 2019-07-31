@@ -5,7 +5,7 @@ import time
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from yolo_utils import bbox_iou, multi_bbox_ious, convert2cpu
+from YOLO3.yolo_utils import bbox_iou, multi_bbox_ious, convert2cpu
 
 class RegionLayer(nn.Module):
     def __init__(self, num_classes=0, anchors=[], num_anchors=1, use_cuda=None):

@@ -3,9 +3,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-from cfg import *
-from region_layer import RegionLayer
-from yolo_layer import YoloLayer
+from YOLO3.cfg import *
+from YOLO3.region_layer import RegionLayer
+from YOLO3.yolo_layer import YoloLayer
 #from layers.batchnorm.bn import BN2d
 
 class MaxPoolStride1(nn.Module):

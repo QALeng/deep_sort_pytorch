@@ -31,14 +31,15 @@ my_config=read_config(configPath,'centos7')
 width,height=1280,720
 #检测函数初始化
 detector=Detector(width,height,my_config)
-video_path='./video/5.mp4'
+video_name='11.mp4'
+video_path='./video/'+video_name
 vdo=cv2.VideoCapture()
 stream=cv2.VideoCapture(video_path)
 
 
 
 
-#pipe
+#pipe初始化
 # rtmp_url = 'rtmp://www.iocollege.com:1935/live/mytest'
 rtm_url='rtmp://video.510link.com:1935/live/streama'
 wp,hp=0.5,0.5
@@ -52,7 +53,7 @@ pipe=pipe_init(rtm_url,size_str , fps,bit)
 #输出文件
 # 用来设置需要保存视频的格式
 fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-output = cv2.VideoWriter("out.avi", fourcc, fps, (width, height))
+output = cv2.VideoWriter("./video_pre/"+video_name, fourcc, fps, (width, height))
 
 
 
