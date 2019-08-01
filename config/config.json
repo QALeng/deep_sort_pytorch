@@ -6,7 +6,8 @@
         "bad_time":"违规时长，单位为s",
         "left_time":"离开时长，单位为s",
         "need":"检测的对象，编号在YOLO3/cfg/coco.names",
-        "yolo": "yolo的版本。本项目现在有yolov3,yolov3-tiny两个版本"
+        "yolo": "yolo的版本。本项目现在有yolov3,yolov3-tiny两个版本",
+        "track_number": "需要追踪的摄像头的数量"
     },
     "explain_e": {
         "cv2_flag":"control the opening of the opencv window",
@@ -15,7 +16,8 @@
         "bad_time":"bad time,the unit is in seconds",
         "left_time":"left time,the unit is in seconds",
         "need":"objects to detect，the Numbers are in YOLO3/cfg/coco.names",
-        "yolo": "yolo versions。The project now has yolov3,yolov3-tiny versions"
+        "yolo": "yolo versions。The project now has yolov3,yolov3-tiny versions",
+        "track_number":"number of cameras to track"
     },
     "win10": {
         "cv2_flag":"True",
@@ -24,7 +26,8 @@
         "bad_time":2,
         "left_time":60,
         "need":[0,1, 2],
-        "yolo":"yolov3-tiny"
+        "yolo":"yolov3-tiny",
+        "track_number": 4
     },
     "centos7": {
         "cv2_flag":"False",
@@ -33,6 +36,7 @@
         "bad_time":2,
         "left_time":60,
         "need":[0,1, 2],
-        "yolo": "yolov3-tiny"
+        "yolo": "yolov3-tiny",
+        "track_number": 4
     }
 }

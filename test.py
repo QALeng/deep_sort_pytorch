@@ -19,8 +19,8 @@ def read_config(configPath,system):
 
 
 #配置文件
-configPath='config.json'
-my_config=read_config(configPath,'centos7')
+configPath='config/config.json'
+my_config=read_config(configPath,'win10')
 #视频名称
 video_name='14.mp4'
 #帧的宽，高度
@@ -45,7 +45,7 @@ wp,hp=1,1
 size=(int(width*wp),int(height*hp))
 size_str=str(size[0])+'x'+str(size[1])
 bit='512K'
-pipe=pipe_init(rtmp_url,size_str , fps,bit)
+# pipe=pipe_init(rtmp_url,size_str , fps,bit)
 
 
 #输出文件
@@ -63,7 +63,7 @@ while vdo.grab():
     ori_im=detector.detect(1,ori_im,start_time)[0]
     output.write(ori_im)
     dispose_img=cv2.resize(ori_im,size)
-    pipe.stdin.write(dispose_img.tostring())  # 存入管道用于直播
+    # pipe.stdin.write(dispose_img.tostring())  # 存入管道用于直播
 
 
 vdo.release()
