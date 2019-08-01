@@ -21,18 +21,23 @@ class Detector(object):
         elif(yolov3Flag=='yolov3-tiny'):
             self.yolo3 = YOLO3("YOLO3/cfg/yolov3-tiny.cfg", "YOLO3/yolov3-tiny.weights", "YOLO3/cfg/coco.names",use_cuda=self.use_cuda, is_xywh=True)
         self.track_number=my_config['track_number']
-        self.deepsort_arr = [ DeepSort("deep/checkpoint/ckpt.t7",use_cuda=self.use_cuda,map_location_flag=self.map_location_flag,
-                                 bad_time=self.bad_time,left_time=self.left_time) for i in range(self.track_number)]
+
         self.class_names = self.yolo3.class_names
         self.write_video = True
-        self.record_object={}  #
         # self.im_width = int(self.vdo.get(cv2.CAP_PROP_FRAME_WIDTH))
         self.im_width=im_width
         # self.im_height = int(self.vdo.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.im_height=im_height
         self.area = 0, 0, self.im_width, self.im_height
         self.bad_time_object=my_config['bad_time_object']
-
+        # self.deepsort_arr = [
+        #     DeepSort("deep/checkpoint/ckpt.t7", use_cuda=self.use_cuda, map_location_flag=self.map_location_flag,
+        #              bad_time=self.bad_time, left_time=self.left_time) for i in range(self.bad_time_object)]
+        self.deepsort_arr=[]
+        for i in range(self.bad_time_object):
+            part=DeepSort("deep/checkpoint/ckpt.t7", use_cuda=self.use_cuda, map_location_flag=self.map_location_flag,
+                     bad_time=self.bad_time, left_time=self.left_time)
+            self.deepsort_arr.append(part)
 
     # def detect(self,index,ori_im,start_time):
     def detect(self,class_list):
@@ -42,20 +47,22 @@ class Detector(object):
         need = self.need
         return_result=[]
         for class_one in class_list:
-            im = class_one.ori_im[ymin:ymax, xmin:xmax, (2, 1, 0)]
-            ori_im=class_one.ori_im
+            ori_im = class_one.ori_im
+            im = ori_im[ymin:ymax, xmin:xmax, (2, 1, 0)]
+            index=class_one.index
+            start_time=class_one.start_time
             # 用于检测物体
             bbox_xywh, cls_conf, cls_ids = self.yolo3(im)
             if bbox_xywh is not None:
                 # mask = cls_ids == 1
                 # 用于在图片上画框
                 mask = [i in need for i in cls_ids]
-                all_name = [str(class_one.index) + '_' + class_name[int(i)] for i in cls_ids if i in need]
+                all_name = [str(index+1) + '_' + class_name[int(i)] for i in cls_ids if i in need]
                 bbox_xywh = bbox_xywh[mask]
                 bbox_xywh[:, 3] *= 1.2
                 cls_conf = cls_conf[mask]
-                outputs, total_name, stay_time = self.deepsort_arr[class_one.index].update(bbox_xywh, cls_conf, im, all_name,
-                                                                                 class_one.start_time)
+                outputs, total_name, stay_time = self.deepsort_arr[index].update(bbox_xywh, cls_conf, im, all_name,
+                                                                                 start_time)
                 #没有人超过违规时间
                 if(len(stay_time)==0):
                     continue
@@ -63,7 +70,8 @@ class Detector(object):
                     bbox_xyxy = outputs[:, :4]
                     identities = outputs[:, -1]  # 可以通过这里来记录时间，因为这里可以查看当前对象的id
                     ori_im = draw_bboxes(ori_im, bbox_xyxy, identities, total_name, offset=(xmin, ymin))
-                part=[class_one.index,ori_im,stay_time[0],stay_time[0:self.bad_time_object]]
+                # part={1:index,2:ori_im,3:stay_time[0],4:stay_time[0:self.bad_time_object]}
+                part=[index,ori_im,stay_time[0],stay_time[0:self.bad_time_object]]
                 return_result.append(part)
 
         return return_result

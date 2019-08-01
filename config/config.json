@@ -25,9 +25,10 @@
         "map_location_flag":"True",
         "bad_time":2,
         "left_time":60,
-        "need":[0,1, 2],
+        "need":[1, 2],
         "yolo":"yolov3-tiny",
-        "track_number": 4
+        "track_number": 4,
+        "bad_time_object": 1
     },
     "centos7": {
         "cv2_flag":"False",
